@@ -4,6 +4,7 @@
 
 int main(int argc, char* argv[]) {
 
+
 	if (argc != 7) {
 
 		cerr << "Command is invalid";
@@ -11,12 +12,12 @@ int main(int argc, char* argv[]) {
 
 	}
 
-	string inpFileName = "225H.pgm";
-	string outFileName = "225Hout.pgm";
-	bool grad=0;
-	int numb_dith=0;
-	int bit=3;
-	double gamma=2.4;
+	string inpFileName;
+	string outFileName;
+	bool grad;
+	int numb_dith;
+	int bit;
+	double gamma;
 
 	try {
 
@@ -62,6 +63,7 @@ int main(int argc, char* argv[]) {
 		pict = new PGM(inpFileName, grad, gamma);
 	}
 	catch (exception& ex) {
+
 		cerr << ex.what();
 		return 1;
 	}
@@ -91,6 +93,7 @@ int main(int argc, char* argv[]) {
 		pict->Halftone(bit);
 	}
 	else {
+		delete pict;
 		cerr << "There is no such algorithm";
 		return 1;
 	}
@@ -98,10 +101,12 @@ int main(int argc, char* argv[]) {
 		pict->write(outFileName, gamma, bit);
 	}
 	catch (exception& ex) {
+		delete pict;
 		cerr << ex.what();
 		return 1;
 	}
-	pict->clear();
+
+	delete pict;
 	return 0;
 
 }

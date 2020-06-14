@@ -92,13 +92,6 @@ private:
 
 public:
 
-	void clear() {
-		pict.clear();
-		vers.clear();
-		OrderedDitheringMatrix.clear();
-		HalftoneMatrix.clear();
-
-	}
 	PGM(string inpFileName,bool gradient,double gamma) {
 		ifstream inpFile(inpFileName, ios::binary);
 		if (!inpFile.is_open()) {
