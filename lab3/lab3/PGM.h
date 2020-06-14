@@ -92,15 +92,17 @@ private:
 
 public:
 
-	/*~PGM() {
-		pict.clear();
-		vers.clear();
-	}*/
 
 	PGM(string inpFileName,bool gradient,double gamma) {
 		ifstream inpFile(inpFileName, ios::binary);
+		if (!inpFile.is_open()) {
+			throw exception("Cant open input file");
+		}
 		char vers1,vers2;
 		inpFile >> vers1 >> vers2 >> width >> height >> colorDepth;
+		if (vers1 != 'P' || vers2 != '5') {
+			throw exception("Wrong format");
+		}
 		vers.push_back(vers1);
 		vers.push_back(vers2);
 		char read_char[1];
@@ -116,10 +118,11 @@ public:
 						throw exception("Too few pixels");
 					}
 					inpFile.read(read_char, 1);
-					new_pixel = double(read_char[0])/colorDepth;
+					new_pixel = double(unsigned char(read_char[0]))/colorDepth;
 					if (gamma != 0) {
 						new_pixel = pow(new_pixel, gamma);
-						pict[i][j] = new_pixel*colorDepth;
+						new_pixel *= colorDepth;
+						pict[i][j] = new_pixel;
 					}
 					else {
 						if (new_pixel < 0.04045) {
@@ -136,8 +139,23 @@ public:
 				}
 				else {
 					new_pixel = (j * 1.0/(double(width)-1));
-					new_pixel = pow(new_pixel, gamma);
-					pict[i][j] = new_pixel * colorDepth;
+					if (gamma != 0) {
+						new_pixel = pow(new_pixel, gamma);
+						new_pixel *= colorDepth;
+						pict[i][j] = new_pixel;
+					}
+					else {
+						if (new_pixel < 0.04045) {
+							new_pixel = new_pixel / 12.92;
+							pict[i][j] = new_pixel * colorDepth;
+						}
+						else {
+							new_pixel = pow((new_pixel + 0.055) / 1.055, 2.2);
+							new_pixel *= colorDepth;
+							pict[i][j] = new_pixel;
+
+						}
+					}
 				}
 			}
 		}
@@ -343,7 +361,7 @@ public:
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++)
 			{
-				double a = HalftoneMatrix[i % 4][j % 4] / 16.0 - 0.5;
+				double a = HalftoneMatrix[i % 4][j % 4] / 17.0 - 0.5;
 				pict[i][j] = find_new_color(sum_between(pict[i][j]/colorDepth, a)*colorDepth,bit);
 			}
 		}

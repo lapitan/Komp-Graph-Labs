@@ -3,7 +3,7 @@
 #include "PGM.h"
 
 int main(int argc, char* argv[]) {
-	
+
 	if (argc != 7) {
 
 		cerr << "Command is invalid";
@@ -31,9 +31,17 @@ int main(int argc, char* argv[]) {
 			cerr << "Wrong gradient";
 			return 1;
 		}
+		if (strlen(argv[4]) != 1 || !isdigit(argv[4][0])) {
+			cerr << "Algo should be int number from 0 to 7";
+			return 1;
+		}
 		numb_dith = atoi(argv[4]);
 		if (numb_dith < 0 || numb_dith>7) {
 			cerr << "Wrong algo";
+			return 1;
+		}
+		if (strlen(argv[5]) != 1 || !isdigit(argv[5][0])) {
+			cerr << "Bits should be int number from 1 to 8";
 			return 1;
 		}
 		bit = atoi(argv[5]);
