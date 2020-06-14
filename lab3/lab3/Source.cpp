@@ -11,12 +11,12 @@ int main(int argc, char* argv[]) {
 
 	}
 
-	string inpFileName = string(argv[1]);
-	string outFileName = string(argv[2]);
-	bool grad;
-	int numb_dith;
-	int bit;
-	double gamma;
+	string inpFileName = "225H.pgm";
+	string outFileName = "225Hout.pgm";
+	bool grad=0;
+	int numb_dith=0;
+	int bit=3;
+	double gamma=2.4;
 
 	try {
 
@@ -101,6 +101,7 @@ int main(int argc, char* argv[]) {
 		cerr << ex.what();
 		return 1;
 	}
+	pict->clear();
 	return 0;
 
 }

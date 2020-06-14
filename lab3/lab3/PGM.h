@@ -76,7 +76,7 @@ private:
 		}
 	}
 
-	double OrderedDitheringMatrix[8][8] = { {0, 48, 12, 60, 3, 51, 15, 63},
+	vector<vector<double>> OrderedDitheringMatrix = { {0, 48, 12, 60, 3, 51, 15, 63},
 									   {32, 16, 44, 28, 35, 19, 47, 31},
 									   {8, 56, 4, 52, 11, 59, 7, 55},
 									   {40, 24, 36, 20, 43, 27, 39, 23},
@@ -85,14 +85,20 @@ private:
 									   {10, 58, 6, 54, 9, 57, 5, 53},
 									   {42, 26, 38, 22, 41, 25, 37, 21} };
 
-	int HalftoneMatrix[4][4]= { {7, 13, 11, 4},
+	vector<vector<int>> HalftoneMatrix= { {7, 13, 11, 4},
 							    {12, 16, 14, 8},
 								{10, 15, 6, 2},
 								{5, 9, 3, 1}};
 
 public:
 
+	void clear() {
+		pict.clear();
+		vers.clear();
+		OrderedDitheringMatrix.clear();
+		HalftoneMatrix.clear();
 
+	}
 	PGM(string inpFileName,bool gradient,double gamma) {
 		ifstream inpFile(inpFileName, ios::binary);
 		if (!inpFile.is_open()) {
@@ -254,7 +260,7 @@ public:
 				}
 			}
 		}
-
+		errors.clear();
 	}
 
 	void Jarvis_dithering(int bit) {
@@ -290,7 +296,7 @@ public:
 				}
 			}
 		}
-
+		errors.clear();
 	}
 
 	void Sierra3_dithering(int bit) {
@@ -324,6 +330,7 @@ public:
 				}
 			}
 		}
+		errors.clear();
 	}
 
 	void Atkinson_dithering(int bit) {
@@ -353,7 +360,7 @@ public:
 				}
 			}
 		}
-
+		errors.clear();
 	}
 
 	void Halftone(int bit) {
