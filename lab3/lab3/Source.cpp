@@ -12,8 +12,8 @@ int main(int argc, char* argv[]) {
 
 	}
 
-	string inpFileName;
-	string outFileName;
+	string inpFileName=argv[1];
+	string outFileName=argv[2];
 	bool grad;
 	int numb_dith;
 	int bit;
