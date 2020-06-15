@@ -221,6 +221,7 @@ public:
 				pixels.push_back(pict[i][j].b);
 			}
 		}
+		needed_max *= 3;
 		sort(pixels.begin(), pixels.end());
 		int maxi = pixels[all_pixels*3- needed_max];
 		int mini = pixels[needed_max];

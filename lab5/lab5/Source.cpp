@@ -12,8 +12,8 @@ int main(int argc,char* argv[]) {
 		return 1;
 	}
 
-	string inpFileName=string (argv[1]);
-	string outFileName=string (argv[2]);
+	string inpFileName=string(argv[1]);
+	string outFileName=string(argv[2]);
 	int action_numb=atoi(argv[3]);
 	int add=0;
 	double mult=0;
