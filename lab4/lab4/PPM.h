@@ -438,9 +438,9 @@ public:
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 
-				double Kr = 0.0722;
-				double Kg = 0.2126;
-				double Kb = 0.7152;
+				double Kb = 0.0722;
+				double Kr = 0.2126;
+				double Kg = 0.7152;
 
 				double Y = pict[i][j].r / double(colorDepth);
 				double Cb = (pict[i][j].g / double(colorDepth)) - 0.5;
