@@ -33,29 +33,32 @@ private:
 	}
 
 public:
-	PPM(int ccount,string inpFileName) {
-		if (ccount == 1) {
-			ifstream inpFile(inpFileName, ios::binary);
-			if (!inpFile.is_open()) {
-				throw exception("Cant open File");
-			}
-			inpFile >> vers[0] >> vers[1] >> width >> height >> colorDepth;
-			if (vers[0] != 'P' || vers[1] != '6') {
-				throw exception("Wrong Fromat");
-			}
-			pict.assign(height, vector<Pixel>(width));
-			char pixel_read[3];
-			char read_char[1];
-			inpFile.read(read_char, 1);
 
-			for (int i = 0; i < height; i++) {
-				for (int j = 0; j < width; j++) {
-					inpFile.read(pixel_read, 3);
-					pict[i][j].r = pixel_read[0];
-					pict[i][j].g = pixel_read[1];
-					pict[i][j].b = pixel_read[2];
+	PPM(int count, string inpFileName) {
+		if (count == 1) {
+			ifstream inpFile(inpFileName, ios::binary);
+			if (!inpFile.is_open())
+				throw runtime_error("Cant open File");
+
+			inpFile >> vers[0] >> vers[1];
+			if (vers[0] != 'P' || vers[1] != '6')
+				throw runtime_error("Wrong Format");
+			inpFile >> width >> height >> colorDepth;
+			pict.assign(height, vector<Pixel>(width));
+			char p;
+			inpFile.read(&p, 1);
+			for (int i = 0; i < height; i++)
+				for (int j = 0; j < width; j++)
+				{
+					Pixel cur;
+					inpFile.read(&p, sizeof(unsigned char));
+					cur.r = p;
+					inpFile.read(&p, sizeof(unsigned char));
+					cur.g = p;
+					inpFile.read(&p, sizeof(unsigned char));
+					cur.b = p;
+					pict[i][j] = cur;
 				}
-			}
 			inpFile.close();
 		}
 		else {
@@ -68,116 +71,107 @@ public:
 				}
 			}
 			if (dotNumb == -1) {
-				throw exception("Cant open File");
+				throw runtime_error("Cant Open File");
 			}
-
-			string BeforeDot = inpFileName.substr(0, dotNumb);
+			string beforeDot = inpFileName.substr(0, dotNumb);
 			string AfterDot = inpFileName.substr(dotNumb);
-			vector<string> inpFileNames;
-			inpFileNames.resize(3);
-			inpFileNames[0] = BeforeDot + "_1" + AfterDot;
-			inpFileNames[1] = BeforeDot + "_2" + AfterDot;
-			inpFileNames[2] = BeforeDot + "_3" + AfterDot;
-
-			for (int k = 0; k < 3; k++) {
-
-				ifstream inpFile(inpFileNames[k], ios::binary);
+			vector<string> files;
+			files.resize(3);
+			files[0] = beforeDot + "_1"+AfterDot;
+			files[1] = beforeDot + "_2" + AfterDot;
+			files[2] = beforeDot + "_3" + AfterDot;
+			for (int k = 0; k < 3; k++)
+			{
+				ifstream inpFile(files[k], ios::binary);
 				if (!inpFile.is_open()) {
-					throw exception("Cant open File");
+					throw runtime_error("Cant Open File ");
 				}
-				inpFile >> vers[0] >> vers[1] >> width >> height >> colorDepth;
+
+				inpFile >> vers[0] >> vers[1];
 				if (vers[0] != 'P' || vers[1] != '5') {
-					throw exception("Wrong Fromat");
+					throw runtime_error("Wrong Format");
 				}
-				pict.assign(height, vector<Pixel>(width));
-				char pixel_read[1];
-				char read_char[1];
-				inpFile.read(read_char, 1);
-
-				for (int i = 0; i < height; i++) {
-					for (int j = 0; j < width; j++) {
-						
-						inpFile.read(pixel_read, 1);
-						if (k == 0) {
-							pict[i][j].r = pixel_read[0];
-						}
-						else if (k == 1) {
-							pict[i][j].g = pixel_read[0];
-						}
-						else {
-							pict[i][j].b = pixel_read[0];
-						}
-						
+				inpFile >> width >> height >> colorDepth;
+				if (pict.size() == 0)
+					pict.assign(height, vector<Pixel>(width));
+				char p;
+				inpFile.read(&p, 1);
+				for (int i = 0; i < height; i++)
+					for (int j = 0; j < width; j++)
+					{
+						inpFile.read(&p, sizeof(unsigned char));
+						if (k == 0)
+							pict[i][j].r = p;
+						if (k == 1)
+							pict[i][j].g = p;
+						if (k == 2)
+							pict[i][j].b = p;
 					}
-				}
 				inpFile.close();
-
 			}
-
 		}
 	}
 
-	void write(int count,string outFileName) {
-
+	void write(int count, string outFileName) {
 		if (count == 1) {
 			ofstream outFile(outFileName, ios::binary);
 			if (!outFile.is_open()) {
-				throw exception("Cant open output file");
+				throw runtime_error("cannot open output file");
 			}
-			outFile << "P6" << '\n' << width << ' ' << height << '\n' << colorDepth << '\n';
-
-			for (int i = 0; i < height; i++) {
-				for (int j = 0; j < width; j++) {
-					outFile << pict[i][j].r << pict[i][j].g << pict[i][j].b;
+			outFile << "P6\n" << width << ' ' << height << '\n' << colorDepth << '\n';
+			for (int i = 0; i < height; i++)
+				for (int j = 0; j < width; j++)
+				{
+					outFile << pict[i][j].r;
+					outFile << pict[i][j].g;
+					outFile << pict[i][j].b;
 				}
-			}
 			outFile.close();
 		}
 		else {
+
 			int dotNumb = -1;
-			for (int i = outFileName.size() - 1; i >= 0; i--) {
+			for (int i = outFileName.size()-1; i >= 0; i--) {
 				if (outFileName[i] == '.') {
 					dotNumb = i;
 					break;
 				}
 			}
-			if (dotNumb == -1) {
-				throw exception("Cant Open File");
-			}
-
-			string BeforeDot = outFileName.substr(0, dotNumb);
+			if (dotNumb == -1)
+				throw runtime_error("Cant open File");
+			string beforeDot = outFileName.substr(0, dotNumb);
 			string AfterDot = outFileName.substr(dotNumb);
-			vector<string> outFileNames;
-			outFileNames.resize(3);
-			outFileNames[0] = BeforeDot + "_1" + AfterDot;
-			outFileNames[1] = BeforeDot + "_2" + AfterDot;
-			outFileNames[2] = BeforeDot + "_3" + AfterDot;
-
-			for (int k = 0; k < 3; k++) {
-				ofstream outFile(outFileNames[k], ios::binary);
+			vector<string> files;
+			files.resize(3);
+			files[0] = beforeDot + "_1" + AfterDot;
+			files[1] = beforeDot + "_2" + AfterDot;
+			files[2] = beforeDot + "_3" + AfterDot;
+			for (int k = 0; k < 3; k++)
+			{
+				ofstream outFile(files[k], ios::binary);
 				if (!outFile.is_open()) {
-					throw exception("Cant open output file");
+					throw runtime_error("Cant open output file ");
 				}
-				outFile << "P5"  << '\n' << width << ' ' << height << '\n' << colorDepth << '\n';
-
-				for (int i = 0; i < height; i++) {
-					for (int j = 0; j < width; j++) {
+				outFile << "P5\n" << width << ' ' << height << '\n' << colorDepth << '\n';
+				for (int i = 0; i < height; i++)
+					for (int j = 0; j < width; j++)
+					{
 						if (k == 0) {
 							outFile << pict[i][j].r;
 						}
-						else if (k == 1) {
+						if (k == 1) {
 							outFile << pict[i][j].g;
 						}
-						else {
+						if (k == 2) {
 							outFile << pict[i][j].b;
 						}
 					}
-				}
 				outFile.close();
 			}
-
 		}
+
 	}
+
 
 	void From_RGB_to_HSL() {
 
