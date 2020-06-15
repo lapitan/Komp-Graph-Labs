@@ -416,9 +416,9 @@ public:
 	
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				double Kr = 0.0722;
-				double Kg = 0.2126;
-				double Kb = 0.7152;
+				double Kb = 0.0722;
+				double Kr = 0.2126;
+				double Kg = 0.7152;
 
 				double R = pict[i][j].r / double(colorDepth);
 				double G = pict[i][j].g / double(colorDepth);
@@ -508,5 +508,56 @@ public:
 				pict[i][j] = { unsigned char(colorDepth - C),unsigned char(colorDepth - M),unsigned char(colorDepth - Y) };
 			}
 		}
+	}
+
+	void ColorSpace_changes(string From,string To) {
+
+		if (From != "RGB") {
+			if (From == "HSL") {
+				From_HSL_to_RGB();
+			}
+			else if (From == "HSV") {
+				From_HSV_to_RGB();
+			}
+			else if (From == "YCbCr.601") {
+				From_YCbCr601_to_RGB();
+			}
+			else if (From == "YCbCr.709") {
+				From_YCbCr709_to_RGB();
+			}
+			else if (From == "YCoCg") {
+				From_YCoCg_to_RGB();
+			}
+			else if (From == "CMY") {
+				From_CMY_to_RGB();
+			}
+			else {
+				throw exception("There is no such Color Space");
+			}
+		}
+		if (To != "RGB") {
+			if (To == "HSL") {
+				From_RGB_to_HSL();
+			}
+			else if (To == "HSV") {
+				From_RGB_to_HSV();
+			}
+			else if (To == "YCbCr.601") {
+				From_RGB_to_YCbCr601();
+			}
+			else if (To == "YCbCr.709") {
+				From_YCbCr709_to_RGB();
+			}
+			else if (To == "YCoCg") {
+				From_RGB_to_YCoCg();
+			}
+			else if (To == "CMY") {
+				From_RGB_to_CMY();
+			}
+			else {
+				throw exception("There is no such Color Space");
+			}
+		}
+
 	}
 };
