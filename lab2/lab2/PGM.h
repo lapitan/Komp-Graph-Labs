@@ -83,6 +83,8 @@ public:
 
 	void wu_algo(double x0, double y0, double x1, double y1,int color) {
 
+		swap(x0, y0);
+		swap(x1, y1);
 		if (y0 == y1) {
 			draw_horizontal(x0, y0, x1, y1,color);
 			return;

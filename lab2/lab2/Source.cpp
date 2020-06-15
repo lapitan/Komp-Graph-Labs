@@ -16,7 +16,7 @@ int main(int argc,char* argv[]) {
 	double y1 = atoi(argv[6]);
 	double x2=atoi(argv[7]);
 	double y2=atoi(argv[8]);
-	int bright=atoi(argv[3]);
+	int bright = atoi(argv[3]);
 	PGM* pict;
 	try {
 		pict = new PGM(inpFileName);
