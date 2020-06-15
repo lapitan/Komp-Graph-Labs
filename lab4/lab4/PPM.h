@@ -74,6 +74,7 @@ public:
 			string BeforeDot = inpFileName.substr(0, dotNumb);
 			string AfterDot = inpFileName.substr(dotNumb);
 			vector<string> inpFileNames;
+			inpFileNames.resize(3);
 			inpFileNames[0] = BeforeDot + "_1" + AfterDot;
 			inpFileNames[1] = BeforeDot + "_2" + AfterDot;
 			inpFileNames[2] = BeforeDot + "_3" + AfterDot;
