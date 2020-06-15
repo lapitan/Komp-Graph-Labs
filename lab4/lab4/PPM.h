@@ -215,10 +215,9 @@ public:
 
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				Pixel curr = pict[i][j];
-				double H = curr.r / double(colorDepth);
-				double S = curr.g / double(colorDepth);
-				double L = curr.b / double(colorDepth);
+				double H = pict[i][j].r / double(colorDepth);
+				double S = pict[i][j].g / double(colorDepth);
+				double L = pict[i][j].b / double(colorDepth);
 				double Q, P;
 				if (L < 0.5) {
 					Q = L * (1.0 + S);
@@ -227,57 +226,59 @@ public:
 					Q = L + S - (L * S);
 				}
 				P = 2 * L - Q;
-				double Tr = H + 1 / 3;
+				double Tr = H + (1.0 / 3);
 				double Tg = H;
-				double Tb = H - 1 / 3;
-
-				if (Tr < 0)Tr += 1;
-				if (Tr > 1)Tr -= 1;
-				if (Tg < 0)Tg += 1;
-				if (Tg > 1)Tg -= 1;
-				if (Tb < 0)Tb += 1;
-				if (Tb > 1)Tb -= 1;
+				double Tb = H - (1.0 / 3);
+				if (Tr < 0)Tr += 1.0;
+				if (Tr > 1.0)Tr -= 1.0;
+				if (Tg < 0)Tg += 1.0;
+				if (Tg > 1.0)Tg -= 1.0;
+				if (Tb < 0)Tb += 1.0;
+				if (Tb > 1.0)Tb -= 1.0;
 				double R, G, B;
-				if (Tr < 1 / 6) {
+
+				if (Tr < 1.0 / 6) {
 					R = P + ((Q - P) * 6 * Tr);
 				}
-				else if (Tr >= 1 / 6 && Tr < 1 / 2) {
+				else if (Tr >= 1.0 / 6 && Tr < 1.0 / 2) {
 					R = Q;
 				}
-				else if (Tr >= 1 / 2 && Tr < 2 / 3) {
-					R = P + ((Q - P) * ((2 / 3) - Tr) * 6);
+				else if (Tr >= 1.0 / 2 && Tr < 2.0/ 3) {
+					R = P + ((Q - P) * ((2.0/ 3) - Tr) * 6);
 				}
 				else {
 					R = P;
 				}
 
-				if (Tg < 1 / 6) {
+				if (Tg < 1.0 / 6) {
 					G = P + ((Q - P) * 6 * Tg);
 				}
-				else if (Tg >= 1 / 6 && Tg < 1 / 2) {
+				else if (Tg >= 1.0 / 6 && Tg < 1.0 / 2) {
 					G = Q;
 				}
-				else if (Tg >= 1 / 2 && Tg < 2 / 3) {
-					G = P + ((Q - P) * ((2 / 3) - Tg) * 6);
+				else if (Tg >= 1.0 / 2 && Tg < 2.0/ 3) {
+					G = P + ((Q - P) * ((2.0/ 3) - Tg) * 6);
 				}
 				else {
 					G = P;
 				}
 
-				if (Tb < 1 / 6) {
+				if (Tb < 1.0 / 6) {
 					B = P + ((Q - P) * 6 * Tb);
 				}
-				else if (Tb >= 1 / 6 && Tb < 1 / 2) {
+				else if (Tb >= 1.0 / 6 && Tb < 1.0 / 2) {
 					B = Q;
 				}
-				else if (Tb >= 1 / 2 && Tb < 2 / 3) {
-					B = P + ((Q - P) * ((2 / 3) - Tb) * 6);
+				else if (Tb >= 1.0 / 2 && Tb < 2.0/ 3) {
+					B = P + ((Q - P) * ((2.0/ 3) - Tb) * 6);
 				}
 				else {
 					B = P;
 				}
-
-				pict[i][j] = { unsigned char(rround(round(R * colorDepth))), unsigned char(rround(round(G * colorDepth))),unsigned char(rround(round(B * colorDepth))) };
+				R = R * colorDepth;
+				G = G * colorDepth;
+				B = B * colorDepth;
+				pict[i][j] = { unsigned char(rround(round(R))), unsigned char(rround(round(G))),unsigned char(rround(round(B))) };
 			}
 		}
 	}

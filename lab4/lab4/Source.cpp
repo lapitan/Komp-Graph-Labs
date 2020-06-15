@@ -44,7 +44,6 @@ int main(int argc, char* argv[]) {
 	try {
 		pict = new PPM(count1, inpFileName);
 		if (From != string("RGB")) {
-			cout << "TRAXALSA JOSKA";
 					if (From == "HSL") {
 						pict->From_HSL_to_RGB();
 					}
