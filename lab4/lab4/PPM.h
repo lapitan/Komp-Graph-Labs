@@ -287,36 +287,41 @@ public:
 	void From_RGB_to_HSV() {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				Pixel curr = pict[i][j];
-				double R = curr.r * 1.0 / double(colorDepth);
-				double G = curr.g * 1.0 / double(colorDepth);
-				double B = curr.b * 1.0 / double(colorDepth);
+
+				double R = pict[i][j].r * 1.0 / double(colorDepth);
+				double G = pict[i][j].g * 1.0 / double(colorDepth);
+				double B = pict[i][j].b * 1.0 / double(colorDepth);
 
 				double maxi = max(R, max(G, B));
 				double mini = min(R, min(G, B));
+				double delta = maxi - mini;
 
 				double H, S, V;
-				if (R == maxi && G >= B) {
-					H = 60 * (G - B) / (maxi - mini);
+				if (delta == 0) {
+					H = 0;
 				}
-				else if (R == maxi && G < B) {
-					H = (60 * (G - B) / (maxi - mini)) + 360;
+				else if (R == maxi) {
+					H = 60 * ((G - B) / delta);
 				}
-				else if (maxi == G) {
-					H = (60 * (B - R) / (maxi - mini)) + 120;
+				else if (G == maxi) {
+					H = 60 * (((B - R) / delta) + 2);
 				}
-				else if (maxi == B) {
-					H = (60 * (R - G) / (maxi - mini)) + 240;
+				else {
+					H = 60 * (((R - G) / delta) + 4);
 				}
+
 				if (maxi == 0) {
 					S = 0;
 				}
 				else {
-					S = 1 - (mini / maxi);
+					S = delta / maxi;
 				}
-				V = maxi;
 
-				pict[i][j] = { unsigned char(round(H * colorDepth / 360)),unsigned char(round(S * colorDepth)),unsigned char(round(V * colorDepth)) };
+				V = maxi;
+				if (H < 0) {
+					H += 360;
+				}
+				pict[i][j] = { unsigned char(round(H * double(colorDepth) / 360.0)),unsigned char(rround(round(S * double(colorDepth)))),unsigned char(rround(round(V * double(colorDepth)))) };
 			}
 		}
 	}
@@ -324,51 +329,42 @@ public:
 	void From_HSV_to_RGB() {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				double H = pict[i][j].r * 360.0 / double(colorDepth);
-				double S = pict[i][j].g * 1.0 / double(colorDepth);
-				double V = pict[i][j].b * 1.0 / double(colorDepth);
 
-				int Hi = floor(H / 60);
-				Hi = Hi % 6;
-				double Vmin = (100 - S) * V / 100;
-				double a = (V - Vmin) * (int(H) % 60) / 60;
-				double Vinc = Vmin + a;
-				double Vdec = V - a;
+				double H = pict[i][j].r / 255.0 * 360.0;
+				double S = pict[i][j].g / 255.0;
+				double V = pict[i][j].b / 255.0;
+				double C = V * S;
+				double Hi = H / 60;
+				double X = C * (1 - abs(((int)Hi) % 2 + (Hi - (int)Hi) - 1));
+				double m = V - C;
 				double R, G, B;
-				if (Hi == 0) {
-					R = V;
-					G = Vinc;
-					B = Vmin;
-				}
-				else if (Hi == 1) {
-					R = Vdec;
-					G = V;
-					B = Vmin;
-				}
-				else if (Hi == 2) {
-					R = Vmin;
-					G = V;
-					B = Vinc;
-				}
-				else if (Hi == 3) {
-					R = Vmin;
-					G = Vdec;
-					B = V;
-				}
-				else if (Hi == 4) {
-					R = Vinc;
-					G = Vmin;
-					B = V;
-				}
-				else {
-					R = V;
-					G = Vmin;
-					B = Vdec;
-				}
+				if (H >= 0 && H <= 60)
+					R = C, G = X, B = 0;
+				else if (H >= 60 && H <= 120)
+					R = X, G = C, B = 0;
+				else if (H >= 120 && H <= 180)
+					R = 0, G = C, B = X;
+				else if (H >= 180 && H <= 240)
+					R = 0, G = X, B = C;
+				else if (H >= 240 && H <= 300)
+					R = X, G = 0, B = C;
+				else
+					R = C, G = 0, B = X;
 
-				pict[i][j] = { unsigned char(round(R * colorDepth / 100)),unsigned char(round(G * colorDepth / 100)),unsigned char(round(B * colorDepth / 100)) };
+				int Rr = (int)(round((R + m) * 255));
+				int Gg = (int)(round((G + m) * 255));
+				int Bb = (int)(round((B + m) * 255));
+
+				if (Rr < 0) Rr = 0;
+				if (Rr > 255) Rr = 255;
+				if (Bb < 0) Bb = 0;
+				if (Bb > 255) Bb = 255;
+				if (Gg < 0) Gg = 0;
+				if (Gg > 255) Gg = 255;
+				pict[i][j]={ (unsigned char)Rr, (unsigned char)Gg, (unsigned char)Bb };
 			}
 		}
+
 
 	}
 
