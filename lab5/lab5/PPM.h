@@ -35,6 +35,14 @@ private:
 		}
 	}
 
+	void not_act1(int add, double mult) {
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				addandmult_YCC(i, j, add, mult);
+			}
+		}
+	}
+
 public:
 	PPM(string inpFileName) {
 			ifstream inpFile(inpFileName, ios::binary);
@@ -130,12 +138,13 @@ public:
 	}
 
 	void act1(int add, double mult) {
+		From_RGB_to_YCbCr601();
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
 				addandmult_YCC(i, j, add, mult);
 			}
 		}
-		//From_YCbCr601_to_RGB();
+		From_YCbCr601_to_RGB();
 	}
 
 	void act2() {
@@ -176,6 +185,7 @@ public:
 
 	void act3() {
 
+		From_RGB_to_YCbCr601();
 		int maxi = -1;
 		int mini = 1000;
 		for (int i = 0; i < height; i++) {
@@ -194,7 +204,8 @@ public:
 		int add = mini;
 		double mult = 255.0 / (maxi - mini);
 		cout << add << " " << mult << "\n";
-		act1(add, mult);
+		not_act1(add, mult);
+		From_YCbCr601_to_RGB();
 
 	}
 
@@ -210,13 +221,6 @@ public:
 				pixels.push_back(pict[i][j].b);
 			}
 		}
-		/*auto it1 = pixels.begin();
-		auto it2 = pixels.end();
-		it2--;
-		for (int i = 0; i < needed_max; i++) {
-			it1++;
-			it2--;
-		}*/
 		sort(pixels.begin(), pixels.end());
 		int maxi = pixels[all_pixels*3- needed_max];
 		int mini = pixels[needed_max];
@@ -231,31 +235,26 @@ public:
 
 	void act5() {
 
+		From_RGB_to_YCbCr601();
 		int all_pixels = width * height;
 		int needed_max = all_pixels * 0.01 * 0.39;
-		set<int> pixels;
+		vector<int> pixels;
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				pixels.insert(pict[i][j].r);
+				pixels.push_back(pict[i][j].r);
 			}
 		}
-		auto it1 = pixels.begin();
-		auto it2 = pixels.end();
-		it2--;
-		for (int i = 0; i < needed_max; i++) {
-			it1++;
-			it2--;
-		}
-
-		int maxi = (*it2);
-		int mini = (*it1);
+		sort(pixels.begin(), pixels.end());
+		int maxi = pixels[all_pixels - needed_max];
+		int mini = pixels[needed_max];
 		if (maxi == mini) {
 			return;
 		}
 		int add = mini;
 		double mult = 255.0 / (maxi - mini);
 		cout << add << " " << mult << "\n";
-		act1(add, mult);
+		not_act1(add, mult);
+		From_YCbCr601_to_RGB();
 	}
 
 	void From_RGB_to_YCbCr601() {
@@ -291,11 +290,12 @@ public:
 				double Cr = (pict[i][j].b / double(colorDepth)) - 0.5;
 
 				double R = Y + Cr * (2 - 2 * Kr);
-				double G = Y - (Kb * (2 - 2 * Kb) / Kg) - (Kr * (202 * Kr) / Kg);
-				double B = Y - Cb * (2 - 2 * Kb);
+				double G = Y - (Cb * (Kb * (2 - 2 * Kb) / Kg)) - (Cr * (Kr * (2 - 2 * Kr) / Kg));
+				double B = Y + Cb * (2 - 2 * Kb);
 
 				pict[i][j] = { unsigned char(rround(int(round(R * colorDepth)))),unsigned char(rround(int(round(G * colorDepth)))),unsigned char(rround(int(round(B * colorDepth)))) };
 			}
 		}
 	}
+
 };

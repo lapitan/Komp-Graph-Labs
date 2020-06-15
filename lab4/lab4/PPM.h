@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cmath>
 #include <algorithm>
+#include <string>
 using namespace std;
 
 struct Pixel
@@ -404,8 +405,8 @@ public:
 				double Cr = (pict[i][j].b / double(colorDepth)) - 0.5;
 
 				double R = Y + Cr * (2 - 2 * Kr);
-				double G = Y - (Kb * (2 - 2 * Kb) / Kg) - (Kr * (202 * Kr) / Kg);
-				double B = Y - Cb * (2 - 2 * Kb);
+				double G = Y - (Cb*(Kb * (2 - 2 * Kb) / Kg)) - (Cr*(Kr * (2-2 * Kr) / Kg));
+				double B = Y + Cb * (2 - 2 * Kb);
 
 				pict[i][j] = { unsigned char(rround(int(round(R * colorDepth)))),unsigned char(rround(int(round(G * colorDepth)))),unsigned char(rround(int(round(B * colorDepth)))) };
 			}
@@ -416,17 +417,20 @@ public:
 	
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				double Kb = 0.0722;
+
 				double Kr = 0.2126;
 				double Kg = 0.7152;
+				double Kb = 0.0722;
 
-				double R = pict[i][j].r / double(colorDepth);
-				double G = pict[i][j].g / double(colorDepth);
-				double B = pict[i][j].b / double(colorDepth);
+				double R = double(pict[i][j].r) / double(colorDepth);
+				double G = double(pict[i][j].g) / double(colorDepth);
+				double B = double(pict[i][j].b) / double(colorDepth);
+
+				//cout << Kb << " " << Kr << " " << Kg << " "<<R<<" "<<G<<" "<<B<<"\n";
 
 				double Y = Kr * R + Kg * G + Kb * B;
-				double Cb = (B / 2) - (Kr * R / (2 * (1 - Kb))) - (Kg * G / (2 * (1 - Kb)));
-				double Cr = (R / 2) - (G * Kg / (2 * (1 - Kr))) - (B * Kb / (2 * (1 - Kr)));
+				double Cb = (B - Y) / (2.0 * (1.0 - Kb));
+				double Cr = (R - Y) / (2.0 * (1.0 - Kr));
 
 				pict[i][j] = { unsigned char(rround(int(round(Y * colorDepth)))),unsigned char(rround(int(round((Cb + 0.5) * colorDepth)))),unsigned char(rround(int(round((Cr + 0.5) * colorDepth)))) };
 			}
@@ -442,13 +446,13 @@ public:
 				double Kr = 0.2126;
 				double Kg = 0.7152;
 
-				double Y = pict[i][j].r / double(colorDepth);
-				double Cb = (pict[i][j].g / double(colorDepth)) - 0.5;
-				double Cr = (pict[i][j].b / double(colorDepth)) - 0.5;
+				double Y = double(pict[i][j].r) / double(colorDepth);
+				double Cb = (double(pict[i][j].g )/ double(colorDepth)) - 0.5;
+				double Cr = (double(pict[i][j].b) / double(colorDepth)) - 0.5;
 
-				double R = Y + Cr * (2 - 2 * Kr);
-				double G = Y - (Kb * (2 - 2 * Kb) / Kg) - (Kr * (202 * Kr) / Kg);
-				double B = Y - Cb * (2 - 2 * Kb);
+				double R = Y + Cr * (2.0 - 2.0* Kr);
+				double G = Y - (Kb * (2.0 - 2.0 * Kb) / Kg)*Cb - Cr*(Kr * (2.0-2.0 * Kr) / Kg);
+				double B = Y + Cb * (2.0 - 2.0 * Kb);
 
 				pict[i][j] = { unsigned char(rround(int(round(R * colorDepth)))),unsigned char(rround(int(round(G * colorDepth)))),unsigned char(rround(int(round(B * colorDepth)))) };
 			}
@@ -546,7 +550,7 @@ public:
 				From_RGB_to_YCbCr601();
 			}
 			else if (To == "YCbCr.709") {
-				From_YCbCr709_to_RGB();
+				From_RGB_to_YCbCr709();
 			}
 			else if (To == "YCoCg") {
 				From_RGB_to_YCoCg();
