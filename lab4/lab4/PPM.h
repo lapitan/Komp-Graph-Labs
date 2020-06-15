@@ -100,12 +100,15 @@ public:
 					for (int j = 0; j < width; j++)
 					{
 						inpFile.read(&p, sizeof(unsigned char));
-						if (k == 0)
+						if (k == 0) {
 							pict[i][j].r = p;
-						if (k == 1)
+						}
+						else if  (k == 1) {
 							pict[i][j].g = p;
-						if (k == 2)
+						}
+						else {
 							pict[i][j].b = p;
+						}
 					}
 				inpFile.close();
 			}
@@ -159,10 +162,10 @@ public:
 						if (k == 0) {
 							outFile << pict[i][j].r;
 						}
-						if (k == 1) {
+						else if (k == 1) {
 							outFile << pict[i][j].g;
 						}
-						if (k == 2) {
+						else {
 							outFile << pict[i][j].b;
 						}
 					}
