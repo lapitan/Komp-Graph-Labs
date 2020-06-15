@@ -43,19 +43,12 @@ int main(int argc, char* argv[]) {
 	PPM* pict;
 	try {
 		pict = new PPM(count1, inpFileName);
+		pict->ColorSpace_changes(From, To);
+		pict->write(count2, outFileName);
 	}
 	catch (exception& ex) {
 		cerr << ex.what();
 		return 1;
-	}
-	try
-	{
-		pict->ColorSpace_changes(From, To);
-		pict->write(count2, outFileName);
-	}
-	catch (const std::exception&)
-	{
-
 	}
 	delete pict;
 	return 0;
