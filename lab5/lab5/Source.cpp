@@ -27,7 +27,7 @@ int main(int argc,char* argv[]) {
 	}
 	if (action_numb <= 1) {
 		add = atoi(argv[4]);
-		mult = atoi(argv[5]);
+		mult = atof(argv[5]);
 	}
 	PPM* pict;
 	try {
